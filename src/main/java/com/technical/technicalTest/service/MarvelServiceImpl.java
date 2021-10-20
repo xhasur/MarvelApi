@@ -103,7 +103,7 @@ public class MarvelServiceImpl implements MarvelService {
      * @param url
      * @return
      */
-    private ResponseMarvel getData(String url) {
+    public ResponseMarvel getData(String url) {
         final ResponseEntity<ResponseMarvel> responseEntity = template.exchange(
                 url,
                 HttpMethod.GET,
