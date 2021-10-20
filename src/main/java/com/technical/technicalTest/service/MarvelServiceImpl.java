@@ -39,6 +39,9 @@ public class MarvelServiceImpl implements MarvelService {
     @Autowired
     private RestTemplate template;
 
+
+
+
     /**
      * This method contains the total of characters
      * @return
@@ -51,6 +54,7 @@ public class MarvelServiceImpl implements MarvelService {
         }
         return Integer.parseInt(serviceResponse.getData().getTotal());
     }
+
 
     /**
      * This method get the character using the limits in the requeste
@@ -68,6 +72,7 @@ public class MarvelServiceImpl implements MarvelService {
         }
         return serviceResponse.getData().getResults().stream().map(marvelCharacter -> marvelCharacter.getId()).collect(Collectors.toList());
     }
+
 
     /**
      * This method obtain the character by id

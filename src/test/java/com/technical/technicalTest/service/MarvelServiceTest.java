@@ -4,14 +4,10 @@ import com.technical.technicalTest.dto.CharctersInfo;
 import com.technical.technicalTest.dto.MarvelCharacter;
 import com.technical.technicalTest.dto.ResponseMarvel;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -29,13 +25,11 @@ import java.util.List;
 @RunWith( MockitoJUnitRunner.class )
 public class MarvelServiceTest {
 
-
     @Mock
     private MarvelService marvelService ;
 
     @Mock
     private RestTemplate template;
-
 
     @Test
     public void getTotal_should_be_return_0()

@@ -3,7 +3,7 @@ package com.technical.technicalTest.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.technical.technicalTest.dto.MarvelCharacter;
 import com.technical.technicalTest.service.MarvelService;
-import com.technical.technicalTest.service.TraslateService;
+import com.technical.technicalTest.service.TranslateService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -24,12 +24,12 @@ import java.util.List;
 public class CharacterController {
 
     private final MarvelService marvelService;
-    private final TraslateService traslateService;
+    private final TranslateService translateService;
     private final Logger log = LoggerFactory.getLogger(CharacterController.class);
 
-    public CharacterController(MarvelService marvelService, TraslateService traslateService) {
+    public CharacterController(MarvelService marvelService, TranslateService translateService) {
         this.marvelService = marvelService;
-        this.traslateService = traslateService;
+        this.translateService = translateService;
     }
 
 
@@ -68,9 +68,8 @@ public class CharacterController {
         if (language != null) {
             String oldDescription = character.getDescription();
             if(!oldDescription.isEmpty()){
-                character.setDescription(traslateService.getTraslate(oldDescription, language));
+                character.setDescription(translateService.getTranslate(oldDescription, language));
             }
-
         }
         return new ResponseEntity<>(character, HttpStatus.OK);
 

@@ -10,14 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class TraslateServiceImpl implements TraslateService{
+public class TranslateServiceImpl implements TranslateService {
 
-    final static Logger logger = LoggerFactory.getLogger(TraslateServiceImpl.class);
+    final static Logger logger = LoggerFactory.getLogger(TranslateServiceImpl.class);
 
-    @Value("${traslate.api.key}")
+    @Value("${translate.api.key}")
     private String apiKey;
 
-    @Value("${traslate.base.url}")
+    @Value("${translate.base.url}")
     private String baseUrl;
 
     @Autowired
@@ -25,7 +25,7 @@ public class TraslateServiceImpl implements TraslateService{
 
 
     @Override
-    public String getTraslate(String text , String lang) {
+    public String getTranslate(String text , String lang) {
         logger.info("Traslating...");
         StringBuilder url = new StringBuilder(baseUrl);
         url.append(Constants.TRANSLATION_URL);
