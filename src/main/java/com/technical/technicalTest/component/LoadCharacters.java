@@ -18,10 +18,8 @@ public class LoadCharacters
         implements ApplicationListener<ApplicationReadyEvent> {
 
     private final Logger log = LoggerFactory.getLogger(LoadCharacters.class);
-
     private final MarvelService marvelService;
     private final String LIMIT = "100";
-
 
     public LoadCharacters(MarvelService marvelService) {
         this.marvelService = marvelService;

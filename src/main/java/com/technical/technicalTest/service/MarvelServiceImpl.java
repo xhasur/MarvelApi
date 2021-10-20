@@ -4,7 +4,6 @@ import com.technical.technicalTest.dto.MarvelCharacter;
 import com.technical.technicalTest.dto.ResponseMarvel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -27,46 +26,40 @@ public class MarvelServiceImpl implements MarvelService {
 
     private final Logger log = LoggerFactory.getLogger(MarvelServiceImpl.class);
 
-    @Value("${value.publicKey}")
-    private String publicKey;
+    private final String publicKey;
 
-    @Value("${value.privateKey}")
-    private String privateKey;
+    private final String privateKey;
 
-    @Value("${value.url}")
-    private String marvelUrl;
+    private final String marvelUrl;
 
-    @Autowired
-    private RestTemplate template;
+    private final RestTemplate template;
+
+    public MarvelServiceImpl(@Value("${value.publicKey}") String publicKey,
+                             @Value("${value.privateKey}") String privateKey,
+                             @Value("${value.url}") String marvelUrl,
+                             RestTemplate template) {
+        this.publicKey = publicKey;
+        this.privateKey = privateKey;
+        this.marvelUrl = marvelUrl;
+        this.template = template;
+    }
 
 
-
-
-    /**
-     * This method contains the total of characters
-     * @return
-     */
     public Integer getTotal() {
         final String url = marvelUrl + "characters?ts=" + Calendar.getInstance().getTimeInMillis() + "&apikey=" + publicKey + "&hash=" + getHash();
-        ResponseMarvel serviceResponse = this.getData(url);
+        final ResponseMarvel serviceResponse = this.getData(url);
         if (serviceResponse.getData() == null && serviceResponse.getData().getResults().isEmpty()) {
-            return  Integer.parseInt("0");
+            return Integer.parseInt("0");
         }
         return Integer.parseInt(serviceResponse.getData().getTotal());
     }
 
 
-    /**
-     * This method get the character using the limits in the requeste
-     * @param limit
-     * @param offset
-     * @return
-     */
-    public List<String> getCharactersIdWithLimits(String limit , String offset) {
+    public List<String> getCharactersIdWithLimits(String limit, String offset) {
         log.debug("Searching with limits and offset");
         final String url = marvelUrl + "characters?ts=" + Calendar.getInstance().getTimeInMillis() + "&apikey=" + publicKey + "&hash=" + getHash();
-        final String urlWithLimits = url + "&limit="+limit+"&offset="+offset;
-        ResponseMarvel serviceResponse = this.getData(urlWithLimits);
+        final String urlWithLimits = url + "&limit=" + limit + "&offset=" + offset;
+        final ResponseMarvel serviceResponse = this.getData(urlWithLimits);
         if (serviceResponse.getData() == null && serviceResponse.getData().getResults().isEmpty()) {
             return new ArrayList<>();
         }
@@ -74,14 +67,9 @@ public class MarvelServiceImpl implements MarvelService {
     }
 
 
-    /**
-     * This method obtain the character by id
-     * @param characterId
-     * @return
-     */
     public MarvelCharacter getCharacterById(Long characterId) {
         final String url = marvelUrl + "characters/" + characterId + "?ts=" + Calendar.getInstance().getTimeInMillis() + "&apikey=" + publicKey + "&hash=" + getHash();
-        ResponseMarvel serviceResponse = this.getData(url);
+        final ResponseMarvel serviceResponse = this.getData(url);
         if (serviceResponse.getData() == null && serviceResponse.getData().getResults().isEmpty()) {
             return new MarvelCharacter();
         }
@@ -89,13 +77,9 @@ public class MarvelServiceImpl implements MarvelService {
     }
 
 
-    /**
-     * This method can be used to call the Marvel endpoint dorectly
-     * @return
-     */
-    public List<String> getCharactersId() {
+    public List<String> getCharactersIdFromMarvelApi() {
         final String url = marvelUrl + "characters?ts=" + Calendar.getInstance().getTimeInMillis() + "&apikey=" + publicKey + "&hash=" + getHash();
-        ResponseMarvel serviceResponse = this.getData(url);
+        final ResponseMarvel serviceResponse = this.getData(url);
         if (serviceResponse.getData() == null && serviceResponse.getData().getResults().isEmpty()) {
             return new ArrayList<>();
         }
@@ -103,23 +87,15 @@ public class MarvelServiceImpl implements MarvelService {
     }
 
 
-    /**
-     * This method , is the method that call the endpoint of marvel
-     * @param url
-     * @return
-     */
-    public ResponseMarvel getData(String url) {
-        final ResponseEntity<ResponseMarvel> responseEntity = template.exchange(
-                url,
-                HttpMethod.GET,
-                new HttpEntity<>(new HttpHeaders()),
-                new ParameterizedTypeReference<ResponseMarvel>() {
-                });
+    private ResponseMarvel getData(String url) {
+        final ResponseEntity<ResponseMarvel> responseEntity = template.getForEntity(
+                url, ResponseMarvel.class);
         return responseEntity.getBody();
     }
 
     /**
      * This method obtain the hash that is used in the marvel Api
+     *
      * @return
      */
     private String getHash() {
@@ -130,10 +106,11 @@ public class MarvelServiceImpl implements MarvelService {
 
     /**
      * This methdd obtain the Md5 code that is necessary in the Marvel Apo
+     *
      * @param message
      * @return
      */
-    public static String md5Java(String message) {
+    private static String md5Java(String message) {
         String digest = null;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");

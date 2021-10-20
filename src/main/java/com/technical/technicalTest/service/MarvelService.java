@@ -11,5 +11,6 @@ public interface MarvelService {
      List<String>  getCharactersIdWithLimits(String limit , String offset);
 
      MarvelCharacter getCharacterById(Long characterId);
+
 }
 
