@@ -2,7 +2,6 @@ package com.technical.technicalTest.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.technical.technicalTest.service.MarvelService;
-import com.technical.technicalTest.service.MarvelServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -19,6 +18,7 @@ public class LoadCharacters
         implements ApplicationListener<ApplicationReadyEvent> {
 
     private final Logger log = LoggerFactory.getLogger(LoadCharacters.class);
+
     private final MarvelService marvelService;
     private final String LIMIT = "100";
 
