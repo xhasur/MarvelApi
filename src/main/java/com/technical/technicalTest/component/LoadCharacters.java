@@ -31,8 +31,10 @@ public class LoadCharacters
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
         ObjectMapper objectMapper = new ObjectMapper();
+        int total = marvelService.getTotal();
+        int totalLoops = total / 100;
         List<String> ids = new ArrayList<>();
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < totalLoops; i++) {
             List<String> idsLoaded;
             String offset= String.valueOf(i);
             idsLoaded   = marvelService.getCharactersIdWithLimits(LIMIT , offset);
