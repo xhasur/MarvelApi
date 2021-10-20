@@ -21,7 +21,6 @@ import java.time.Duration;
 @PropertySource("classpath:marvel.properties")
 public class GeneralConfiguration {
 
-
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
           return builder

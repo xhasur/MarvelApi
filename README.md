@@ -9,3 +9,7 @@ The dependencies will be installed automatically by maven, but for the translati
 
 The project will be running on port 8080 as the test said.
 
+http://localhost:8080/characters/1017100
+http://localhost:8080/characters
+
+These are the endpoints that are working!!! Enjoy!

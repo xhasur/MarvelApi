@@ -41,11 +41,10 @@ public class LoadCharacters
             ids.addAll(idsLoaded);
         }
         try {
-
             log.debug("Adding Ids");
             objectMapper.writeValue(new File("marvel-ids.json"), ids);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return;
     }
