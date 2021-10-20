@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,7 +25,7 @@ public class TraslateServiceImpl implements TraslateService{
 
 
     @Override
-    public AsyncResult<ResponseEntity<String>> getTraslate(String text , String lang) {
+    public String getTraslate(String text , String lang) {
         logger.info("Traslating...");
         StringBuilder url = new StringBuilder(baseUrl);
         url.append(Constants.TRANSLATION_URL);
@@ -34,6 +33,7 @@ public class TraslateServiceImpl implements TraslateService{
         url.append(Constants.TEXT_TO_TRANSLATE).append(Constants.EQUAL_SIGN).append(text).append(Constants.AMPERSAND_SIGN);
         url.append(Constants.TARGET_LANGUAGE).append(Constants.EQUAL_SIGN).append(lang);
         ResponseEntity<String> translation = template.getForEntity(url.toString(), String.class );
-        return new AsyncResult<ResponseEntity<String>>(translation);
+        return translation.getBody();
+
     }
 }

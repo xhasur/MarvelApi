@@ -66,7 +66,11 @@ public class CharacterController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         if (language != null) {
-            character.setDescription("");
+            String oldDescription = character.getDescription();
+            if(!oldDescription.isEmpty()){
+                character.setDescription(traslateService.getTraslate(oldDescription, language));
+            }
+
         }
         return new ResponseEntity<>(character, HttpStatus.OK);
 
