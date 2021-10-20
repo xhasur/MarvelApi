@@ -39,19 +39,27 @@ public class MarvelServiceImpl implements MarvelService {
     @Autowired
     private RestTemplate template;
 
-
-    @Override
-    public List<String> getCharactersId() {
+    /**
+     * This method contains the total of characters
+     * @return
+     */
+    public Integer getTotal() {
         final String url = marvelUrl + "characters?ts=" + Calendar.getInstance().getTimeInMillis() + "&apikey=" + publicKey + "&hash=" + getHash();
         ResponseMarvel serviceResponse = this.getData(url);
         if (serviceResponse.getData() == null && serviceResponse.getData().getResults().isEmpty()) {
-            return new ArrayList<>();
+            return  Integer.parseInt("0");
         }
-        return serviceResponse.getData().getResults().stream().map(marvelCharacter -> marvelCharacter.getId()).collect(Collectors.toList());
-
+        return Integer.parseInt(serviceResponse.getData().getTotal());
     }
 
+    /**
+     * This method get the character using the limits in the requeste
+     * @param limit
+     * @param offset
+     * @return
+     */
     public List<String> getCharactersIdWithLimits(String limit , String offset) {
+        log.debug("Searching with limits and offset");
         final String url = marvelUrl + "characters?ts=" + Calendar.getInstance().getTimeInMillis() + "&apikey=" + publicKey + "&hash=" + getHash();
         final String urlWithLimits = url + "&limit="+limit+"&offset="+offset;
         ResponseMarvel serviceResponse = this.getData(urlWithLimits);
@@ -61,19 +69,40 @@ public class MarvelServiceImpl implements MarvelService {
         return serviceResponse.getData().getResults().stream().map(marvelCharacter -> marvelCharacter.getId()).collect(Collectors.toList());
     }
 
-
-
-    @Override
-    public List<MarvelCharacter> getCharacterById(Long characterId) {
+    /**
+     * This method obtain the character by id
+     * @param characterId
+     * @return
+     */
+    public MarvelCharacter getCharacterById(Long characterId) {
         final String url = marvelUrl + "characters/" + characterId + "?ts=" + Calendar.getInstance().getTimeInMillis() + "&apikey=" + publicKey + "&hash=" + getHash();
+        ResponseMarvel serviceResponse = this.getData(url);
+        if (serviceResponse.getData() == null && serviceResponse.getData().getResults().isEmpty()) {
+            return new MarvelCharacter();
+        }
+        return serviceResponse.getData().getResults().get(0);
+    }
+
+
+    /**
+     * This method can be used to call the Marvel endpoint dorectly
+     * @return
+     */
+    public List<String> getCharactersId() {
+        final String url = marvelUrl + "characters?ts=" + Calendar.getInstance().getTimeInMillis() + "&apikey=" + publicKey + "&hash=" + getHash();
         ResponseMarvel serviceResponse = this.getData(url);
         if (serviceResponse.getData() == null && serviceResponse.getData().getResults().isEmpty()) {
             return new ArrayList<>();
         }
-        return serviceResponse.getData().getResults();
+        return serviceResponse.getData().getResults().stream().map(marvelCharacter -> marvelCharacter.getId()).collect(Collectors.toList());
     }
 
 
+    /**
+     * This method , is the method that call the endpoint of marvel
+     * @param url
+     * @return
+     */
     private ResponseMarvel getData(String url) {
         final ResponseEntity<ResponseMarvel> responseEntity = template.exchange(
                 url,
@@ -84,12 +113,21 @@ public class MarvelServiceImpl implements MarvelService {
         return responseEntity.getBody();
     }
 
+    /**
+     * This method obtain the hash that is used in the marvel Api
+     * @return
+     */
     private String getHash() {
         Calendar calendar = Calendar.getInstance();
         final String stringToHash = calendar.getTimeInMillis() + privateKey + publicKey;
         return md5Java(stringToHash);
     }
 
+    /**
+     * This methdd obtain the Md5 code that is necessary in the Marvel Apo
+     * @param message
+     * @return
+     */
     public static String md5Java(String message) {
         String digest = null;
         try {

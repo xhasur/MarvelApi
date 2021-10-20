@@ -2,6 +2,9 @@ package com.technical.technicalTest.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.technical.technicalTest.service.MarvelService;
+import com.technical.technicalTest.service.MarvelServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -15,7 +18,9 @@ import java.util.List;
 public class LoadCharacters
         implements ApplicationListener<ApplicationReadyEvent> {
 
+    private final Logger log = LoggerFactory.getLogger(LoadCharacters.class);
     private final MarvelService marvelService;
+    private final String LIMIT = "100";
 
 
     public LoadCharacters(MarvelService marvelService) {
@@ -27,13 +32,15 @@ public class LoadCharacters
     public void onApplicationEvent(final ApplicationReadyEvent event) {
         ObjectMapper objectMapper = new ObjectMapper();
         List<String> ids = new ArrayList<>();
-        for (int i = 0; i < 1; i++) {
-            List<String> idsLoaded = new ArrayList<>();
-            String offset= String.valueOf(0);
-            idsLoaded   = marvelService.getCharactersIdWithLimits("100" , offset);
+        for (int i = 0; i < 16; i++) {
+            List<String> idsLoaded;
+            String offset= String.valueOf(i);
+            idsLoaded   = marvelService.getCharactersIdWithLimits(LIMIT , offset);
             ids.addAll(idsLoaded);
         }
         try {
+
+            log.debug("Adding Ids");
             objectMapper.writeValue(new File("marvel-ids.json"), ids);
         } catch (IOException e) {
             e.printStackTrace();

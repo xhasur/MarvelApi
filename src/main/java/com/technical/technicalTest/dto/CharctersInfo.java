@@ -13,6 +13,10 @@ public class CharctersInfo {
 
     @Getter
     @Setter
+    private String total;
+
+    @Getter
+    @Setter
     private List<MarvelCharacter>  results;
 
 }

@@ -6,10 +6,10 @@ import java.util.List;
 
 public interface MarvelService {
 
-     List<String> getCharactersId();
+     Integer  getTotal();
 
      List<String>  getCharactersIdWithLimits(String limit , String offset);
 
-     List<MarvelCharacter> getCharacterById(Long characterId);
+     MarvelCharacter getCharacterById(Long characterId);
 }
 
