@@ -26,7 +26,7 @@ public class TranslateServiceImpl implements TranslateService {
 
     @Override
     public String getTranslate(String text , String lang) {
-        logger.info("Traslating...");
+        logger.info("Translating...");
         StringBuilder url = new StringBuilder(baseUrl);
         url.append(Constants.TRANSLATION_URL);
         url.append(Constants.KEY).append(Constants.EQUAL_SIGN).append(apiKey).append(Constants.AMPERSAND_SIGN);

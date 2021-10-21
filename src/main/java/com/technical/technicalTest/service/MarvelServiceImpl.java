@@ -5,11 +5,6 @@ import com.technical.technicalTest.dto.ResponseMarvel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -46,70 +41,65 @@ public class MarvelServiceImpl implements MarvelService {
 
 
     public Integer getTotal() {
-        final String url = marvelUrl + "characters?ts=" + Calendar.getInstance().getTimeInMillis() + "&apikey=" + publicKey + "&hash=" + getHash();
-        final ResponseMarvel serviceResponse = this.getData(url);
-        if (serviceResponse.getData() == null && serviceResponse.getData().getResults().isEmpty()) {
-            return Integer.parseInt("0");
+        final String url = marvelUrl + "characters?ts=" + this.getUrlHash();
+        ResponseMarvel serviceResponse = null;
+        try {
+            serviceResponse = this.getData(url);
+            if (serviceResponse.getData() == null && serviceResponse.getData().getResults().isEmpty()) {
+                return Integer.parseInt("0");
+            }
+            return Integer.parseInt(serviceResponse.getData().getTotal());
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
-        return Integer.parseInt(serviceResponse.getData().getTotal());
+        return null;
     }
-
 
     public List<String> getCharactersIdWithLimits(String limit, String offset) {
-        log.debug("Searching with limits and offset");
-        final String url = marvelUrl + "characters?ts=" + Calendar.getInstance().getTimeInMillis() + "&apikey=" + publicKey + "&hash=" + getHash();
-        final String urlWithLimits = url + "&limit=" + limit + "&offset=" + offset;
-        final ResponseMarvel serviceResponse = this.getData(urlWithLimits);
-        if (serviceResponse.getData() == null && serviceResponse.getData().getResults().isEmpty()) {
-            return new ArrayList<>();
-        }
-        return serviceResponse.getData().getResults().stream().map(marvelCharacter -> marvelCharacter.getId()).collect(Collectors.toList());
-    }
+        ResponseMarvel serviceResponse = null;
+        final String url = marvelUrl + "characters?ts=" + this.getUrlHash() + "&limit=" + limit + "&offset=" + offset;
+        try {
+            serviceResponse = this.getData(url);
+            if (serviceResponse.getData() == null && serviceResponse.getData().getResults().isEmpty()) {
+                return new ArrayList<>();
+            }
+            return serviceResponse.getData().getResults().stream().map(marvelCharacter -> marvelCharacter.getId()).collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error(e.getMessage());
 
+        }
+        return null;
+    }
 
     public MarvelCharacter getCharacterById(Long characterId) {
+        ResponseMarvel serviceResponse = null;
         final String url = marvelUrl + "characters/" + characterId + "?ts=" + Calendar.getInstance().getTimeInMillis() + "&apikey=" + publicKey + "&hash=" + getHash();
-        final ResponseMarvel serviceResponse = this.getData(url);
-        if (serviceResponse.getData() == null && serviceResponse.getData().getResults().isEmpty()) {
-            return new MarvelCharacter();
+        try {
+            serviceResponse = this.getData(url);
+            if (serviceResponse.getData() == null && serviceResponse.getData().getResults().isEmpty()) {
+                return new MarvelCharacter();
+            }
+            return serviceResponse.getData().getResults().get(0);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
         }
-        return serviceResponse.getData().getResults().get(0);
+        return null;
     }
 
-
-    public List<String> getCharactersIdFromMarvelApi() {
-        final String url = marvelUrl + "characters?ts=" + Calendar.getInstance().getTimeInMillis() + "&apikey=" + publicKey + "&hash=" + getHash();
-        final ResponseMarvel serviceResponse = this.getData(url);
-        if (serviceResponse.getData() == null && serviceResponse.getData().getResults().isEmpty()) {
-            return new ArrayList<>();
-        }
-        return serviceResponse.getData().getResults().stream().map(marvelCharacter -> marvelCharacter.getId()).collect(Collectors.toList());
+    private ResponseMarvel getData(String url) throws Exception {
+        return template.getForEntity(url, ResponseMarvel.class).getBody();
     }
 
-
-    private ResponseMarvel getData(String url) {
-        final ResponseEntity<ResponseMarvel> responseEntity = template.getForEntity(
-                url, ResponseMarvel.class);
-        return responseEntity.getBody();
+    private String getUrlHash() {
+        return Calendar.getInstance().getTimeInMillis() + "&apikey=" + publicKey + "&hash=" + getHash();
     }
 
-    /**
-     * This method obtain the hash that is used in the marvel Api
-     *
-     * @return
-     */
     private String getHash() {
         Calendar calendar = Calendar.getInstance();
         final String stringToHash = calendar.getTimeInMillis() + privateKey + publicKey;
         return md5Java(stringToHash);
     }
 
-    /**
-     * This methdd obtain the Md5 code that is necessary in the Marvel Apo
-     *
-     * @param message
-     * @return
-     */
     private static String md5Java(String message) {
         String digest = null;
         try {

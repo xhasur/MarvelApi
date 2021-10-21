@@ -65,15 +65,13 @@ public class CharacterController {
         if (character == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if (language != null) {
-            String oldDescription = character.getDescription();
-            if(!oldDescription.isEmpty()){
-                character.setDescription(translateService.getTranslate(oldDescription, language));
+        if (language != null && !character.getDescription().isEmpty()) {
+            try {
+                character.setDescription(translateService.getTranslate(character.getDescription(), language));
+            } catch (Exception e) {
+                character.setDescription(character.getDescription());
             }
         }
         return new ResponseEntity<>(character, HttpStatus.OK);
-
     }
-
-
 }

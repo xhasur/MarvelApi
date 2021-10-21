@@ -34,12 +34,13 @@ public class LoadCharacters
         List<String> ids = new ArrayList<>();
         for (int i = 0; i < totalLoops; i++) {
             List<String> idsLoaded;
-            String offset= String.valueOf(i);
-            idsLoaded   = marvelService.getCharactersIdWithLimits(LIMIT , offset);
-            ids.addAll(idsLoaded);
+            String offset = String.valueOf(i);
+            idsLoaded = marvelService.getCharactersIdWithLimits(LIMIT, offset);
+            if (idsLoaded != null) {
+                ids.addAll(idsLoaded);
+            }
         }
         try {
-            log.debug("Adding Ids");
             objectMapper.writeValue(new File("marvel-ids.json"), ids);
         } catch (IOException e) {
             log.error(e.getMessage());
